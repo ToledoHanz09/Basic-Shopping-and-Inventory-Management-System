@@ -1,27 +1,27 @@
 from collections import deque
-import time
-import re
+import time **#for adding delay**
+import re **#for pattern matching**
 
-order_queue = deque()
-accounts = {}
-inventories = {}
+order_queue = deque() **#holds orders**
+accounts = {} **#store user accounts**
+inventories = {} **#store shop inventories**
 
-class InvalidPasswordError(Exception):
+class InvalidPasswordError(Exception): **#exceptions for specific error conditions**
     pass
 class InvalidShopNameError(Exception):
     pass
 class InsufficientFundsError(Exception):
     pass
 
-def validate_password(password):
+def validate_password(password): **#checks if pw is alphanumeric & between 8-16**
     if not re.match(r'^[a-zA-Z0-9]{8,16}$', password):
         raise InvalidPasswordError("Password must be alphanumeric and between 8 to 16 characters.")
 
-def validate_shop_name(shop_name):
+def validate_shop_name(shop_name): **#checks if shop already exists**
     if shop_name in inventories:
         raise InvalidShopNameError("Shop name is not available. Please choose a different shop name.")
       
-def sign_up():
+def sign_up(): **#prompts new & unique username**
     while True:
         username = input("Enter a new username (or type 'back' to go back): ")
         if username.lower() == 'back':
@@ -30,7 +30,7 @@ def sign_up():
             print("Username already exists. Try again.")
         else:
             break
-    while True:
+    while True: **#prompts pw and validates it**
         password = input("Enter a password: ")
         try:
             validate_password(password)
@@ -38,7 +38,7 @@ def sign_up():
         except InvalidPasswordError as e:
             print(e)
             print("Please try again.")
-    while True:
+    while True: **#prompts for role.**
         role = input("Enter role (user/seller) (or type 'back' to go back): ").lower()
         if role == 'back':
             return
@@ -47,7 +47,7 @@ def sign_up():
         else:
             print("Invalid role. Try again.")
     
-    shop_name = None
+    shop_name = None **#if seller,prompts a shop name and validates it**
     if role == 'seller':
         while True:
             shop_name = input("Enter your shop name: ")
@@ -62,7 +62,7 @@ def sign_up():
     accounts[username] = {'password': password, 'role': role, 'shop': shop_name}
     print(f"Account created for {username} as {role}.\n")
 
-def log_in():
+def log_in(): **#prompts username and ensures it exists**
     while True:
         username = input("Enter your username (or type 'back' to go back): ")
         if username.lower() == 'back':
@@ -73,7 +73,7 @@ def log_in():
         else:
             break
 
-    while True:
+    while True: **#prompts password and checks if it matches**
         password = input("Enter your password (or type 'back' to go back): ")
         if password.lower() == 'back':
             return None
@@ -83,16 +83,16 @@ def log_in():
             break
 
     print(f"Welcome, {username}.\n")
-    return username
+    return username **#returns if login is successful**
 
 def log_out():
     print("You have been logged out.\n")
     return None
 
-def switch_account():
+def switch_account(): **#calls log_in function**
     return log_in()
 
-def add_stock(username):
+def add_stock(username): **#prompts seller for product details & updates the shop's inventory**
     shop_name = accounts[username]['shop']
     while True:
         product = input("Enter product name (or type 'back' to go back): ")
@@ -127,7 +127,7 @@ def add_stock(username):
         print(f"Added {quantity} {product}(s) to the inventory of {shop_name}.\n")
         break
 
-def check_inventory(username):
+def check_inventory(username): **#display seller's current inventory**
     shop_name = accounts[username]['shop']
     if not inventories[shop_name]:
         print("Inventory is empty.\n")
@@ -139,21 +139,21 @@ def check_inventory(username):
         print("{:<20} {:<10} {:<20} â‚±{:<10.2f}".format(product, details['quantity'], details['description'], details['price']))
     print()
 
-def display_available_products():
+def display_available_products(): **#display available products for each shop if the inventory is not empty**
     for shop_name, inventory in inventories.items():
         if inventory:
             print(f"\nAvailable Products at {shop_name}:")
-            print("{:<20} {:<10} {:<20} {:<10}".format('Product', 'Quantity', 'Description', 'Price'))
-            print("-" * 60)
-            for product, details in inventory.items():
+            print("{:<20} {:<10} {:<20} {:<10}".format('Product', 'Quantity', 'Description', 'Price')) **#format method to create formatted string with aligned columns for Product, Quantity, Description, and Price. {:<20} means left aligned within a 20-character wide field**
+            print("-" * 60) **#separator line of 60 dashes**
+            for product, details in inventory.items(): **#for loop to go through each item. items() returns key-value pairs (ex. product -> product name; details -> quantity,descrip,price**
                 if details['quantity'] > 0:
-                    print("{:<20} {:<10} {:<20} â‚±{:<10.2f}".format(product, details['quantity'], details['description'], details['price']))
+                    print("{:<20} {:<10} {:<20} â‚±{:<10.2f}".format(product, details['quantity'], details['description'], details['price'])) **#â‚±{:<10.2f} formats price within 10-character wide field, showing 2 decimal places and prefixing â‚± for currency**
     if not inventories:
         print("No products available.")
 
 def select_shop():
     print("\nAvailable Shops:")
-    for shop in inventories.keys():
+    for shop in inventories.keys(): **#iterate over the keys (shop names) in the inventories**
         print(shop)
     while True:
         shop_name = input("Select a shop (or type 'back' to go back): ")
@@ -163,7 +163,7 @@ def select_shop():
             print(f"\nProducts available at {shop_name}:")
             print("{:<20} {:<10} {:<20} {:<10}".format('Product', 'Quantity', 'Description', 'Price'))
             print("-" * 60)
-            for product, details in inventories[shop_name].items():
+            for product, details in inventories[shop_name].items(): **#List all products in selected shop**
                 print("{:<20} {:<10} {:<20} â‚±{:<10.2f}".format(product, details['quantity'], details['description'], details['price']))
             return shop_name
         else:
@@ -204,7 +204,8 @@ class OrderSystem:
             if not address:
                 print("Address can't be empty. Try again.")
                 continue
-
+                
+**#create the order dictionary**
             order = {
                 'Name': username,
                 'Shop': shop_name,
@@ -216,13 +217,13 @@ class OrderSystem:
             }
 
             order_queue.append(order)
-            inventories[shop_name][product]['quantity'] -= quantity
+            inventories[shop_name][product]['quantity'] -= quantity **#reduce the qty of ordered product**
             print(f"Order for {quantity} {product}(s) from {shop_name} placed by {username} at {address} has been added.\n")
             break
 
     def deliver_order(self, username):
         user_orders = [order for order in order_queue if order['Name'] == username]
-        if user_orders:
+        if user_orders: **#process first order**
             delivered_order = user_orders[0]
             order_queue.remove(delivered_order)
             total_price = delivered_order['Total']
@@ -248,6 +249,7 @@ class OrderSystem:
 order_system = OrderSystem()
 current_user = None
 
+**#infinite loop for main program**
 while True:
     if not current_user:
         print("1. Sign Up")
