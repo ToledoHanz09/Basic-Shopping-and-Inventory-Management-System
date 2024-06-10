@@ -147,56 +147,6 @@ def check_inventory(username):
     else:
         print("Inventory is empty.")
 
-# Function to remove stock (restricted to sellers)
-def remove_stock(username):
-    user_info = accounts[username]
-    if user_info['role'] != 'seller':
-        return
-
-    shop_name = user_info['shop']
-    print(f"\nCurrent inventory for {shop_name}:")
-    if inventories[shop_name]:
-        print(f"{'Product':<20}{'Quantity':<10}{'Price':<10}")
-        print("-" * 40)
-        for product, details in inventories[shop_name].items():
-            print(f"{product:<20}{details['quantity']:<10}{details['price']:<10.2f}")
-    else:
-        print("Inventory is empty.")
-        return
-
-    product_name = input("Enter product name to remove: ")
-    if product_name in inventories[shop_name]:
-        quantity = int(input("Enter quantity to remove: "))
-        if quantity > inventories[shop_name][product_name]['quantity']:
-            print("Cannot remove more than available quantity.")
-        else:
-            inventories[shop_name][product_name]['quantity'] -= quantity
-            if inventories[shop_name][product_name]['quantity'] == 0:
-                del inventories[shop_name][product_name]
-            print(f"Removed {quantity} of {product_name} from {shop_name}.")
-    else:
-        print("Product not found in inventory.")
-    print(f"Inventory updated for {shop_name}.\n")
-
-    shop_name = user_info['shop']
-    print(f"\nCurrent inventory for {shop_name}:")
-    for product, details in inventories[shop_name].items():
-        print(f"  {product}: {details['quantity']} units")
-
-    product_name = input("Enter product name to remove: ")
-    if product_name in inventories[shop_name]:
-        quantity = int(input("Enter quantity to remove: "))
-        if quantity > inventories[shop_name][product_name]['quantity']:
-            print("Cannot remove more than available quantity.")
-        else:
-            inventories[shop_name][product_name]['quantity'] -= quantity
-            if inventories[shop_name][product_name]['quantity'] == 0:
-                del inventories[shop_name][product_name]
-            print(f"Removed {quantity} of {product_name} from {shop_name}.")
-    else:
-        print("Product not found in inventory.")
-    print(f"Inventory updated for {shop_name}.\n")
-
 # Function to display available products (for all users)
 def display_available_products():
     print("Available Products:")
