@@ -364,6 +364,24 @@ def initialize_database():
         conn = sqlite3.connect('shop_system.db')
         c = conn.cursor()        
         c.execute('''
+            CREATE TABLE IF NOT EXISTS accounts (
+                username TEXT PRIMARY KEY,
+                password TEXT NOT NULL,
+                role TEXT NOT NULL,
+                shop_name TEXT
+            )
+        ''')
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS inventories (
+                shop_name TEXT NOT NULL,
+                product TEXT NOT NULL,
+                description TEXT NOT NULL,
+                quantity INTEGER NOT NULL,
+                price REAL NOT NULL,
+                PRIMARY KEY (shop_name, product, description)
+            )
+        ''')
+        c.execute('''
             CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL,
